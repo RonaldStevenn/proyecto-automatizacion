@@ -1,0 +1,65 @@
+# Nombre de tu flujo de trabajo (puedes poner el que quieras)
+name: CI (Build y Test) para Mini-App
+
+# 1. EL "DISPARADOR" (TRIGGER)
+# Esto le dice a GitHub cuándo debe ejecutar esta automatización.
+on:
+  # En este caso, se ejecutará CADA VEZ que hagas "git push"
+  # a la rama principal (que usualmente se llama "main")
+  push:
+    branches: [ "main" ]
+
+# 2. LOS "TRABAJOS" (JOBS)
+# Aquí defines las tareas. Puedes tener varias, pero para
+# esta tarea, una es suficiente.
+jobs:
+  # Nombramos nuestro trabajo "build-and-test"
+  build-and-test:
+    
+    # Le pedimos a GitHub una máquina virtual (un "runner")
+    # con el sistema operativo Ubuntu más reciente para correr el script.
+    runs-on: ubuntu-latest
+
+    # 3. LOS "PASOS" (STEPS)
+    # Esta es la secuencia de comandos que se ejecutarán,
+    # uno por uno, dentro de esa máquina virtual.
+    steps:
+      # Paso 1: Clonar tu repositorio
+      # Esto descarga tu código (app.js, package.json, etc.)
+      # en la máquina virtual.
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      # Paso 2: Configurar el entorno de Node.js
+      # Esto instala Node.js en la máquina,
+      # especificamos la versión 18.
+      - name: Configurar Node.js v18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # --- ESTOS PASOS CUMPLEN TU TAREA ---
+
+      # Paso 3: Instalación de dependencias (Requisito de la tarea)
+      - name: Instalar dependencias (npm install)
+        run: npm install
+
+      # Paso 4: Despliegue/Ejecución de la app (Requisito de la tarea)
+      # Iniciamos la app en segundo plano (con "&")
+      - name: Iniciar la aplicación en segundo plano
+        run: node app.js &
+
+      # Paso 5: Dar tiempo a la app para que inicie
+      # Damos 5 segundos de gracia para que el servidor
+      # esté listo antes de probarlo.
+      - name: Esperar que el servidor inicie
+        run: sleep 5
+
+      # Paso 6: Verificación del estado (Requisito de la tarea)
+      # Usamos 'curl' para hacer una petición a la ruta que creaste.
+      # El comando 'grep' buscará la palabra "ok" en la respuesta.
+      # Si no la encuentra, el pipeline fallará (¡lo cual es bueno!)
+      - name: Verificar el estado de la aplicación
+        run: curl http://localhost:3000/api/status | grep "ok"
+
+      # --- FIN DE LOS PASOS DE LA TAREA ---
