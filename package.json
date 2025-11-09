@@ -1,0 +1,14 @@
+{
+  "name": "mini-app-cicd",
+  "version": "1.0.0",
+  "description": "Mini-aplicación de ejemplo para un proyecto de CI/CD.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
